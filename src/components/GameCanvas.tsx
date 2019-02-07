@@ -56,6 +56,7 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
         this.renderWelcomeText();
         this.generateEntities();
         this.generateLayout();
+        // TODO: Optimise to render only entities visible to player camera; ie. those not under fog-of-war
         this.renderEntities();
         this.renderStaticObjects();
     }
@@ -90,17 +91,20 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
         }
     }
 
-    getRandomPosition(): Position {
+    getRandomGridPosition(): Position {
         const randomX = Math.floor(Math.random() * this.canvasRef.current.width);
         const randomY = Math.floor(Math.random() * this.canvasRef.current.height);
-        return new Position(randomX, randomY);
+        return new Position(
+            CONSTANTS.GRID_UNIT*Math.floor(randomX/CONSTANTS.GRID_UNIT),
+            CONSTANTS.GRID_UNIT*Math.floor(randomY/CONSTANTS.GRID_UNIT)
+        );
     }
     
     generateEntities(): void {
-        const player: Player = new Player(this.getRandomPosition());
+        const player: Player = new Player(this.getRandomGridPosition());
         let enemies: Enemy[] = new Array<Enemy>();
         for (let i = 0; i < 10; i++) {
-            enemies.push(new Enemy(this.getRandomPosition()));
+            enemies.push(new Enemy(this.getRandomGridPosition()));
         }
         const { gameData } = this.state;
         gameData.player = player;

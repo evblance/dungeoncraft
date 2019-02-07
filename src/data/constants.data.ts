@@ -1,4 +1,5 @@
 export const CONSTANTS: any = {
+    GRID_UNIT: 10,
     MOVEMENT_UNIT: 10,
     PLAYER_SCALE: 10,
     ENEMY_SCALE: 10,
