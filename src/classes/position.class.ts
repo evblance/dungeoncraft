@@ -1,10 +1,10 @@
 export default class Position {
 
-    x: number;
-    y: number;
+    public x: number;
+    public y: number;
 
-    constructor(obj?: any) {
-        this.x = obj && obj.x || null
-        this.y = obj && obj.y || null
+    constructor(x: number, y: number) {
+        this.x = x;
+        this.y = y;
     }
 }

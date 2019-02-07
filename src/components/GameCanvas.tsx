@@ -1,14 +1,19 @@
 import React, { Component } from 'react';
-import { CONSTANTS } from '../data/constants.data';
+import Position from '../classes/position.class';
+import Player from '../classes/player.class';
+import Enemy from '../classes/enemy.class';
 import { IGameData } from '../interfaces/game-data.interface';
+import { EControlKeys } from '../enums/control-keys.enum';
+import { INITIAL_GAMEDATA } from '../data/initialisation.data';
+import { CONSTANTS } from '../data/constants.data';
 import styled from 'styled-components';
 
 interface GameCanvasProps {
-    gameData: IGameData,
+    input: EControlKeys | undefined,
 }
 
 interface GameCanvasState {
-
+    gameData: IGameData,
 }
 
 class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
@@ -18,6 +23,9 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
 
     constructor(props: GameCanvasProps) {
         super(props);
+        this.state = {
+            gameData: INITIAL_GAMEDATA,
+        }
         this.canvasRef = React.createRef<HTMLCanvasElement>();
     }
 
@@ -26,8 +34,8 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
     }
 
     componentWillUpdate(nextProps: GameCanvasProps, nextState: GameCanvasState) {
-        console.log(nextProps.gameData.playerPosition);
-        console.log(nextProps.gameData.playerHealth);
+        console.log(nextState);
+        this.handleInput(nextProps.input);
         this.updateCanvas();
     }
 
@@ -46,6 +54,8 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
     initCanvas(): void {
         this.canvasContext = this.canvasRef.current.getContext('2d');
         this.renderWelcomeText();
+        this.generateEntities();
+        this.generateLayout();
         this.renderEntities();
         this.renderStaticObjects();
     }
@@ -60,10 +70,51 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
         this.renderStaticObjects();
     }
 
+    handleInput(input: EControlKeys | undefined): void {
+        const { gameData } = this.state;
+        switch (input) {
+            case EControlKeys.UP:
+                gameData.player.getWorldPosition().y -= CONSTANTS.MOVEMENT_UNIT;
+                break;
+            case EControlKeys.LEFT:
+                gameData.player.getWorldPosition().x -= CONSTANTS.MOVEMENT_UNIT;
+                break;
+            case EControlKeys.RIGHT:
+                gameData.player.getWorldPosition().x += CONSTANTS.MOVEMENT_UNIT;
+                break;
+            case EControlKeys.DOWN:
+                gameData.player.getWorldPosition().y += CONSTANTS.MOVEMENT_UNIT;
+                break;
+            default:
+                break;
+        }
+    }
+
+    getRandomPosition(): Position {
+        const randomX = Math.floor(Math.random() * this.canvasRef.current.width);
+        const randomY = Math.floor(Math.random() * this.canvasRef.current.height);
+        return new Position(randomX, randomY);
+    }
+    
+    generateEntities(): void {
+        const player: Player = new Player(this.getRandomPosition());
+        let enemies: Enemy[] = new Array<Enemy>();
+        for (let i = 0; i < 10; i++) {
+            enemies.push(new Enemy(this.getRandomPosition()));
+        }
+        const { gameData } = this.state;
+        gameData.player = player;
+        gameData.enemies = enemies;
+        this.setState({ gameData });
+    }
+
+    generateLayout(): void {
+        // TODO: Generate walls, obstructions, weapons
+    }
+
     getTextLines(canvasContext: any, text: string, maxWidth: number): string[] {
         const words: string[] = text.split(' ');
         const lines: string[] = [];
-
         let currentLine = words[0];
         for (let w = 1; w < words.length; w++) {
             const word = words[w];
@@ -75,9 +126,7 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
                 currentLine = word;
             }
         }
-
         lines.push(currentLine);
-
         return lines;
     }
 
@@ -97,6 +146,7 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
 
     renderEntities(): void {
         this.renderPlayer();
+        this.renderEnemies();
     }
 
     renderStaticObjects(): void {
@@ -104,13 +154,19 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
     }
 
     renderPlayer(): void {
-        const { playerPosition } = this.props.gameData;
-        this.canvasContext.fillStyle = CONSTANTS.PLAYER_COLOUR;
+        const { player }: { player: Player } = this.state.gameData;
+        const playerPosition = player.getWorldPosition();
+        this.canvasContext.fillStyle = player.getColour();
         this.canvasContext.fillRect(playerPosition.x, playerPosition.y, CONSTANTS.PLAYER_SCALE, CONSTANTS.PLAYER_SCALE);
     }
 
     renderEnemies(): void {
-        // TODO: Render enemies
+        const { enemies }: { enemies: Enemy[] } = this.state.gameData;
+        enemies.forEach((enemy) => {
+            const position = enemy.getWorldPosition();
+            this.canvasContext.fillStyle = enemy.getColour();
+            this.canvasContext.fillRect(position.x, position.y, CONSTANTS.ENEMY_SCALE, CONSTANTS.ENEMY_SCALE);
+        });
     }
 }
 

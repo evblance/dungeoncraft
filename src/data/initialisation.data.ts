@@ -1,7 +1,9 @@
 import { IGameData } from '../interfaces/game-data.interface';
 import Position from '../classes/position.class';
+import Player from '../classes/player.class';
+import Enemy from '../classes/enemy.class';
 
 export const INITIAL_GAMEDATA: IGameData = {
-    playerPosition: new Position({x: 0, y: 0}),
-    playerHealth: 100,
+    player: new Player(),
+    enemies: new Array<Enemy>(),
 }

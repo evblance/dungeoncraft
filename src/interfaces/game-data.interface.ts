@@ -1,6 +1,7 @@
-import Position from '../classes/position.class';
+import Player from '../classes/player.class';
+import Enemy from '../classes/enemy.class';
 
 export interface IGameData {
-    playerPosition: Position,
-    playerHealth: number,
+    player: Player
+    enemies: Enemy[],
 }

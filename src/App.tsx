@@ -2,15 +2,14 @@ import React, { Component } from 'react';
 import GameCanvas from './components/GameCanvas';
 import { IGameData } from './interfaces/game-data.interface';
 import { EControlKeys } from './enums/control-keys.enum';
-import { INITIAL_GAMEDATA } from './data/initialisation.data';
 import { CONSTANTS } from './data/constants.data';
 import styled from 'styled-components';
 import './App.css';
 
-interface AppProps { }
+interface AppProps {}
 
 interface AppState {
-    gameData: IGameData
+    lastInput: EControlKeys | undefined,
 }
 
 class App extends Component<AppProps, AppState> {
@@ -20,7 +19,7 @@ class App extends Component<AppProps, AppState> {
     constructor(props: AppProps) {
         super(props);
         this.state = {
-            gameData: INITIAL_GAMEDATA,
+            lastInput: undefined,
         }
     }
 
@@ -36,7 +35,7 @@ class App extends Component<AppProps, AppState> {
         return (
             <React.Fragment>
                 <AppTitle>Dungeon Crawler</AppTitle>
-                <GameCanvas gameData={this.state.gameData} />
+                <GameCanvas input={this.state.lastInput} />
             </React.Fragment>
         );
     }
@@ -44,27 +43,9 @@ class App extends Component<AppProps, AppState> {
     listenForInput(): void {
         this.inputListener = window.addEventListener('keypress', (event: KeyboardEvent) => {
             event.preventDefault();
-            const { gameData } = this.state;
-            switch (event.key) {
-                case EControlKeys.UP:
-                    gameData.playerPosition.y -= CONSTANTS.MOVEMENT_UNIT;
-                    this.setState({ gameData });
-                    break;
-                case EControlKeys.LEFT:
-                    gameData.playerPosition.x -= CONSTANTS.MOVEMENT_UNIT;
-                    this.setState({ gameData });
-                    break;
-                case EControlKeys.RIGHT:
-                    gameData.playerPosition.x += CONSTANTS.MOVEMENT_UNIT;
-                    this.setState({ gameData });
-                    break;
-                case EControlKeys.DOWN:
-                    gameData.playerPosition.y += CONSTANTS.MOVEMENT_UNIT;
-                    this.setState({ gameData });
-                    break;
-                default:
-                    console.log('no control key was pressed');
-            }
+            this.setState({
+                lastInput: event.key as EControlKeys,
+            });
         });
     }
 }
