@@ -54,6 +54,25 @@ export default class Entity extends GameObject {
         }
     }
 
+    public recoil(moveDirection: EControlKeys): void {
+        switch (moveDirection) {
+            case EControlKeys.DOWN:
+                this.worldPosition.y -= CONSTANTS.MOVEMENT_UNIT;
+                break;
+            case EControlKeys.RIGHT:
+                this.worldPosition.x -= CONSTANTS.MOVEMENT_UNIT;
+                break;
+            case EControlKeys.LEFT:
+                this.worldPosition.x += CONSTANTS.MOVEMENT_UNIT;
+                break;
+            case EControlKeys.UP:
+                this.worldPosition.y += CONSTANTS.MOVEMENT_UNIT;
+                break;
+            default:
+                break;
+        }
+    }
+
     constructor(
         faction: EFaction = EFaction.NEUTRAL,
         worldPosition: Position = new Position(),

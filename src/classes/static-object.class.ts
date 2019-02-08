@@ -9,6 +9,18 @@ export default class StaticObject extends GameObject {
     private colour: string;
     private collider: Collider;
 
+    public getType(): EStaticObjectType {
+        return this.type;
+    }
+
+    public getColour(): string {
+        return this.colour;
+    }
+
+    public getCollider(): Collider {
+        return this.collider;
+    }
+
     constructor(
         worldPosition: Position,
         type: EStaticObjectType,

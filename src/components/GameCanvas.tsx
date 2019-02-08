@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import Position from '../classes/position.class';
+import StaticObject from '../classes/static-object.class';
 import Player from '../classes/player.class';
 import Enemy from '../classes/enemy.class';
 import Entity from '../classes/entity.class';
 import GameWorld from '../classes/game-world.class';
 import _Collision from '../classes/static/collision.class';
+import { ICollision } from '../interfaces/collision.interface';
 import { EControlKeys } from '../enums/control-keys.enum';
 import { CONSTANTS } from '../data/constants.data';
 import styled from 'styled-components';
-import { EFaction } from '../enums/faction.enum';
-import { IEntityCollision } from '../interfaces/collision.interface';
 
 interface GameCanvasProps {
     input: EControlKeys | undefined,
@@ -32,12 +32,12 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
         this.canvasRef = React.createRef<HTMLCanvasElement>();
     }
 
-    componentDidMount() {
+    componentDidMount(): void {
         this.initCanvas();
     }
 
-    componentWillUpdate(nextProps: GameCanvasProps, nextState: GameCanvasState) {
-        this.handleInput(nextProps.input);
+    componentDidUpdate() {
+        this.handleInput(this.props.input);
         this.updateCanvas();
     }
 
@@ -71,13 +71,7 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
         this.canvasContext.clearRect(0, 0, this.canvasRef.current.width, this.canvasRef.current.height);
     }
 
-    updateCanvas(): void {
-        
-        const playerCollisions = this.getPlayerCollisions();
-        if (playerCollisions.length) {
-            console.log(playerCollisions);
-        }
-        
+    updateCanvas(): void {        
         this.clearCanvas();
         this.renderEntities();
         this.renderStaticObjects();
@@ -86,21 +80,49 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
     handleInput(input: EControlKeys | undefined): void {
         const player = this.getGameWorld().getGameObjectByClass(Player) as Player;
         player.move(input!);
+        this.resolvePlayerCollisions(player, input!);
+        // TODO
+        //this.doNextEntityAction(player, input!);
     }
 
-    getPlayerCollisions(): IEntityCollision[] {
+    resolvePlayerCollisions(player: Player, input: EControlKeys): void {
+        const playerCollisions = this.getCollisions(player);
+        if (!playerCollisions.length) { return };
+        player.recoil(input!);
+    }
+
+    doNextEntityAction(entity: Entity, input: EControlKeys): void {
+        // TODO
+    }
+
+    getCollisions(actor: StaticObject | Entity): ICollision[] {
         const gameWorld = this.getGameWorld();
-        const player = gameWorld.getGameObjectByClass(Player) as Player;
-        const playerColliderBounds: any = player.getCollider()!.getBounds(player.getWorldPosition());
+        const objectCollBnds: any = actor.getCollider()!.getBounds(actor.getWorldPosition());
         const entities = gameWorld.getGameObjectsByClass(Entity) as Entity[];
-        const collisions: IEntityCollision[] = new Array<IEntityCollision>();
-        for (let entity of entities) {
-            if (entity.getFaction() === EFaction.PLAYER) { continue; }
-            const collisionArea = _Collision.getCollidingArea(playerColliderBounds, entity.getCollider()!.getBounds(entity.getWorldPosition()));
-            if (collisionArea > 0) {
-                collisions.push({collisionArea, collidingObject: entity});
+        const staticObjects = gameWorld.getGameObjectsByClass(StaticObject) as StaticObject[];
+
+        const collisions: ICollision[] = new Array<ICollision>();
+        if (entities) {
+            for (let entity of entities) {
+                // Friendly entity collisions are ignored
+                if (actor instanceof Entity && entity.getFaction() === actor.getFaction()) { continue; }
+    
+                const collisionArea = _Collision.getCollidingArea(objectCollBnds, entity.getCollider()!.getBounds(entity.getWorldPosition()));
+                if (collisionArea > 0) {
+                    collisions.push({collisionArea, collidingObject: entity});
+                }
             }
         }
+
+        if (staticObjects) {
+            for (let s of staticObjects) {
+                const collisionArea = _Collision.getCollidingArea(objectCollBnds, s.getCollider()!.getBounds(s.getWorldPosition()));
+                if (collisionArea > 0) {
+                    collisions.push({collisionArea, collidingObject: s});
+                }
+            }
+        }
+
         return collisions;       
     }
 
