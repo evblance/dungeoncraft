@@ -4,9 +4,12 @@ import Player from '../classes/player.class';
 import Enemy from '../classes/enemy.class';
 import Entity from '../classes/entity.class';
 import GameWorld from '../classes/game-world.class';
+import _Collision from '../classes/static/collision.class';
 import { EControlKeys } from '../enums/control-keys.enum';
 import { CONSTANTS } from '../data/constants.data';
 import styled from 'styled-components';
+import { EFaction } from '../enums/faction.enum';
+import { IEntityCollision } from '../interfaces/collision.interface';
 
 interface GameCanvasProps {
     input: EControlKeys | undefined,
@@ -69,7 +72,12 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
     }
 
     updateCanvas(): void {
-        this.detectCollisions();
+        
+        const playerCollisions = this.getPlayerCollisions();
+        if (playerCollisions.length) {
+            console.log(playerCollisions);
+        }
+        
         this.clearCanvas();
         this.renderEntities();
         this.renderStaticObjects();
@@ -80,8 +88,20 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
         player.move(input!);
     }
 
-    detectCollisions(): void {
-        // TODO:
+    getPlayerCollisions(): IEntityCollision[] {
+        const gameWorld = this.getGameWorld();
+        const player = gameWorld.getGameObjectByClass(Player) as Player;
+        const playerColliderBounds: any = player.getCollider()!.getBounds(player.getWorldPosition());
+        const entities = gameWorld.getGameObjectsByClass(Entity) as Entity[];
+        const collisions: IEntityCollision[] = new Array<IEntityCollision>();
+        for (let entity of entities) {
+            if (entity.getFaction() === EFaction.PLAYER) { continue; }
+            const collisionArea = _Collision.getCollidingArea(playerColliderBounds, entity.getCollider()!.getBounds(entity.getWorldPosition()));
+            if (collisionArea > 0) {
+                collisions.push({collisionArea, collidingObject: entity});
+            }
+        }
+        return collisions;       
     }
 
     getRandomGridPosition(): Position {
