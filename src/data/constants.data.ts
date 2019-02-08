@@ -1,4 +1,6 @@
 export const CONSTANTS: any = {
+    CANVAS_WIDTH: 1200,
+    CANVAS_HEIGHT: 600,
     GRID_UNIT: 10,
     MOVEMENT_UNIT: 10,
     PLAYER_SCALE: 10,

@@ -43,8 +43,8 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
             <GameCanvasWrapper>
                 <canvas
                     ref={this.canvasRef}
-                    width={window.innerWidth}
-                    height={window.innerHeight}
+                    width={CONSTANTS.CANVAS_WIDTH}
+                    height={CONSTANTS.CANVAS_HEIGHT}
                 />
             </GameCanvasWrapper>
         )
@@ -168,6 +168,8 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
 export default GameCanvas;
 
 const GameCanvasWrapper = styled.div`
-    border: 1px solid var(--primaryColour);
-    height: calc(100vh - 50px - 2rem);
+    border: 2px solid var(--primaryColour);
+    margin: 2rem auto;
+    height: ${CONSTANTS.CANVAS_HEIGHT}px;
+    width:  ${CONSTANTS.CANVAS_WIDTH}px;
 `
