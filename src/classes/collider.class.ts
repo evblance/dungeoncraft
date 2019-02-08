@@ -8,7 +8,7 @@ export default class Collider extends GameObject {
     dx: number;
     dy: number;
 
-    public getColliderBounds(position: Position): IQuadBounds {
+    public getBounds(position: Position): IQuadBounds {
         const topLeft = new Position(position.x - this.dx, position.y - this.dy);
         const topRight = new Position(position.x + this.dx, position.y - this.dy);
         const bottomLeft = new Position(position.x - this.dx, position.y + this.dy);
@@ -29,5 +29,5 @@ export default class Collider extends GameObject {
         this.dx = dx;
         this.dy = dy;
     }
-    
+
 }
