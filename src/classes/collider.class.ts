@@ -1,6 +1,6 @@
 import GameObject from './game-object.class';
 import Position from './position.class';
-import { IQuadBounds } from '../interfaces/quad-bounds.interface';
+import { IBoundingRect } from '../interfaces/bounding-rect.interface';
 import { CONSTANTS } from '../data/constants.data';
 
 export default class Collider extends GameObject {
@@ -8,16 +8,17 @@ export default class Collider extends GameObject {
     dx: number;
     dy: number;
 
-    public getBounds(position: Position): IQuadBounds {
-        const topLeft = new Position(position.x - this.dx, position.y - this.dy);
-        const topRight = new Position(position.x + this.dx, position.y - this.dy);
-        const bottomLeft = new Position(position.x - this.dx, position.y + this.dy);
-        const bottomRight = new Position(position.x + this.dx, position.y + this.dy);
+    public getBounds(position: Position): IBoundingRect {
+        const top = position.y - this.dy;
+        const right =  position.x + this.dx;
+        const bottom = position.y + this.dy;
+        const left = position.x - this.dx;
+
         return {
-            TOP_LEFT: topLeft,
-            TOP_RIGHT: topRight,
-            BOTTOM_LEFT: bottomLeft,
-            BOTTOM_RIGHT: bottomRight,
+            TOP: top,
+            RIGHT: right,
+            BOTTOM: bottom,
+            LEFT: left,
         };
     }
 
