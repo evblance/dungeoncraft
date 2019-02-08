@@ -1,4 +1,4 @@
-export interface IQuadBounds {
+export interface IBoundingRect {
     TOP: number,
     RIGHT: number,
     BOTTOM: number,
