@@ -3,22 +3,22 @@ import Position from './position.class';
 export default class GameObject {
  
     protected worldPosition: Position;
-    protected colour: string;
+    protected name: string;
 
     public getWorldPosition(): Position {
         return this.worldPosition;
     }
 
-    public getColour(): string {
-        return this.colour;
+    public getName(): string {
+        return this.name;
     }
 
     constructor(
         worldPosition: Position = new Position(0, 0),
-        colour: string = `rgba(0,0,0,0)`,
+        name?: string,
     ) {
         this.worldPosition = worldPosition;
-        this.colour = colour;
+        this.name = name || `New ${this.constructor.name}`;
     }
 
 }

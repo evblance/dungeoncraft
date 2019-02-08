@@ -4,6 +4,7 @@ export const CONSTANTS: any = {
     PLAYER_SCALE: 10,
     ENEMY_SCALE: 10,
     BOSS_SCALE: 20,
+    ENTITY_DEFAULT_SCALE: 10,
     PLAYER_DEFAULT_COLOUR: `white`,
     ENEMY_DEFAULT_COLOUR: 'red',
     ENTITY_DEFAULT_COLOUR: 'black',

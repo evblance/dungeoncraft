@@ -1,8 +1,6 @@
 import React, { Component } from 'react';
 import GameCanvas from './components/GameCanvas';
-import { IGameData } from './interfaces/game-data.interface';
 import { EControlKeys } from './enums/control-keys.enum';
-import { CONSTANTS } from './data/constants.data';
 import styled from 'styled-components';
 import './App.css';
 
