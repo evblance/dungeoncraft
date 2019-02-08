@@ -107,7 +107,10 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
                 // Friendly entity collisions are ignored
                 if (actor instanceof Entity && entity.getFaction() === actor.getFaction()) { continue; }
     
-                const collisionArea = _Collision.getCollidingArea(objectCollBnds, entity.getCollider()!.getBounds(entity.getWorldPosition()));
+                const collisionArea = _Collision.getCollidingArea(
+                    objectCollBnds,
+                    entity.getCollider()!.getBounds(entity.getWorldPosition())
+                );
                 if (collisionArea > 0) {
                     collisions.push({collisionArea, collidingObject: entity});
                 }
@@ -116,7 +119,10 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
 
         if (staticObjects) {
             for (let s of staticObjects) {
-                const collisionArea = _Collision.getCollidingArea(objectCollBnds, s.getCollider()!.getBounds(s.getWorldPosition()));
+                const collisionArea = _Collision.getCollidingArea(
+                    objectCollBnds,
+                    s.getCollider()!.getBounds(s.getWorldPosition())
+                );
                 if (collisionArea > 0) {
                     collisions.push({collisionArea, collidingObject: s});
                 }
@@ -169,7 +175,11 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
 
     renderTextLines(lines: string[]): void {
         for (let l = 0; l < lines.length; l++) {
-            this.canvasContext.fillText(lines[l], window.innerWidth/2, window.innerHeight/2 - 16*5*lines.length + 16*5*l);
+            this.canvasContext.fillText(
+                lines[l],
+                window.innerWidth/2,
+                window.innerHeight/2 - 16*5*lines.length + 16*5*l
+            );
         }
     }
 
@@ -194,7 +204,12 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
         const player = this.getGameWorld().getGameObjectByClass(Player) as Player;
         const playerPosition = player.getWorldPosition();
         this.canvasContext.fillStyle = player.getColour();
-        this.canvasContext.fillRect(playerPosition.x, playerPosition.y, CONSTANTS.PLAYER_SCALE, CONSTANTS.PLAYER_SCALE);
+        this.canvasContext.fillRect(
+            playerPosition.x,
+            playerPosition.y,
+            CONSTANTS.PLAYER_SCALE,
+            CONSTANTS.PLAYER_SCALE
+        );
     }
 
     renderEnemies(): void {
@@ -202,7 +217,12 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
         enemies.forEach((enemy: Enemy) => {
             const position = enemy.getWorldPosition();
             this.canvasContext.fillStyle = enemy.getColour();
-            this.canvasContext.fillRect(position.x, position.y, CONSTANTS.ENEMY_SCALE, CONSTANTS.ENEMY_SCALE);
+            this.canvasContext.fillRect(
+                position.x,
+                position.y,
+                CONSTANTS.ENEMY_SCALE,
+                CONSTANTS.ENEMY_SCALE
+            );
         });
     }
 }
