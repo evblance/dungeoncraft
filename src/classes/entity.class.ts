@@ -1,5 +1,6 @@
 import GameObject from './game-object.class';
 import Position from './position.class';
+import Scale from './scale.class';
 import Collider from './collider.class';
 import { EFaction } from '../enums/faction.enum';
 import { EEntityState } from '../enums/entity-state.enum';
@@ -79,6 +80,7 @@ export default class Entity extends GameObject {
         health: number = 100,
         colour: string = CONSTANTS.ENTITY_DEFAULT_COLOUR,
         state: EEntityState = EEntityState.ALIVE,
+        scale: Scale = new Scale({X: CONSTANTS.GRID_UNIT, Y: CONSTANTS.GRID_UNIT}),
         collider?: Collider,
     ) {
         super();
@@ -87,6 +89,7 @@ export default class Entity extends GameObject {
         this.health = health;
         this.colour = colour;
         this.state = state;
+        this.scale = scale;
         this.collider = collider || new Collider();
     }
 
