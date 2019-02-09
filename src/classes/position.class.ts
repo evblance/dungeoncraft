@@ -1,14 +1,15 @@
+import IVector2D from "../interfaces/vector-2d.interface";
+
 export default class Position {
 
     public x: number;
     public y: number;
 
     constructor(
-        x: number = 0,
-        y: number = 0,
+        vector2D: IVector2D = {X: 0, Y: 0},
     ) {
-        this.x = x;
-        this.y = y;
+        this.x = vector2D.X;
+        this.y = vector2D.Y;
     }
 
 }
