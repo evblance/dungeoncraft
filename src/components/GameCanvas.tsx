@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import Position from '../classes/position.class';
 import StaticObject from '../classes/static-object.class';
 import Player from '../classes/player.class';
 import Enemy from '../classes/enemy.class';
 import Entity from '../classes/entity.class';
 import GameWorld from '../classes/game-world.class';
 import _Collision from '../classes/static/collision.class';
+import _ProcGen from '../classes/static/proc-gen.class';
 import { ICollision } from '../interfaces/collision.interface';
 import { EControlKeys } from '../enums/control-keys.enum';
 import { CONSTANTS } from '../data/constants.data';
@@ -60,8 +60,8 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
     initCanvas(): void {
         this.canvasContext = this.canvasRef.current.getContext('2d');
         this.renderWelcomeText();
-        this.generateEntities();
         this.generateLayout();
+        this.generateEntities();
         // TODO: Optimise to render only entities visible to player camera; ie. those not under fog-of-war
         this.renderEntities();
         this.renderStaticObjects();
@@ -88,6 +88,7 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
     resolvePlayerCollisions(player: Player, input: EControlKeys): void {
         const playerCollisions = this.getCollisions(player);
         if (!playerCollisions.length) { return };
+        console.log(playerCollisions);
         player.recoil(input!);
     }
 
@@ -131,28 +132,15 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
 
         return collisions;       
     }
-
-    getRandomGridPosition(): Position {
-        const randomX = Math.floor(Math.random() * this.canvasRef.current.width);
-        const randomY = Math.floor(Math.random() * this.canvasRef.current.height);
-        return new Position(
-            CONSTANTS.GRID_UNIT*Math.floor(randomX/CONSTANTS.GRID_UNIT),
-            CONSTANTS.GRID_UNIT*Math.floor(randomY/CONSTANTS.GRID_UNIT)
-        );
-    }
     
     generateEntities(): void {
-        const gameWorld = this.getGameWorld();
-        const player: Player = new Player(this.getRandomGridPosition());
-        for (let i = 0; i < 10; i++) {
-            gameWorld.getContext().push(new Enemy(this.getRandomGridPosition()));
-        }
-        gameWorld.getContext().push(player);
-        this.setState({ gameWorld });
+        const updatedWorld = _ProcGen.generateEntities(this.getGameWorld(), this.canvasRef);
+        this.setState({ gameWorld: updatedWorld });
     }
 
     generateLayout(): void {
-        // TODO: Generate walls, obstructions, weapons
+        const generatedWorld = _ProcGen.generateLayout(this.getGameWorld(), this.canvasRef);
+        this.setState({ gameWorld: generatedWorld });
     }
 
     getTextLines(canvasContext: any, text: string, maxWidth: number): string[] {
@@ -197,18 +185,31 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
     }
 
     renderStaticObjects(): void {
-        // TODO: Render walls, obstructions, weapons
+        // TODO: Render rooms, weapons
+        const statics = this.getGameWorld().getGameObjectsByClass(StaticObject) as StaticObject[];
+        statics.forEach((s: StaticObject) => {
+            const position = s.getWorldPosition();
+            const scale = s.getScale();
+            this.canvasContext.fillStyle = s.getColour();
+            this.canvasContext.fillRect(
+                position.x,
+                position.y,
+                scale.x,
+                scale.y,
+            );
+        });
     }
 
     renderPlayer(): void {
         const player = this.getGameWorld().getGameObjectByClass(Player) as Player;
         const playerPosition = player.getWorldPosition();
+        const playerScale = player.getScale();
         this.canvasContext.fillStyle = player.getColour();
         this.canvasContext.fillRect(
             playerPosition.x,
             playerPosition.y,
-            CONSTANTS.PLAYER_SCALE,
-            CONSTANTS.PLAYER_SCALE
+            playerScale.x,
+            playerScale.y,
         );
     }
 
@@ -216,12 +217,13 @@ class GameCanvas extends Component<GameCanvasProps, GameCanvasState> {
         const enemies = this.getGameWorld().getGameObjectsByClass(Enemy) as Enemy[];
         enemies.forEach((enemy: Enemy) => {
             const position = enemy.getWorldPosition();
+            const scale = enemy.getScale();
             this.canvasContext.fillStyle = enemy.getColour();
             this.canvasContext.fillRect(
                 position.x,
                 position.y,
-                CONSTANTS.ENEMY_SCALE,
-                CONSTANTS.ENEMY_SCALE
+                scale.x,
+                scale.y,
             );
         });
     }
