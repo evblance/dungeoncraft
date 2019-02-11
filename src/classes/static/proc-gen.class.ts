@@ -277,6 +277,7 @@ export default class _ProcGen {
                         objectColour,
                         objectScale,
                         new Collider(new Scale({X: objectScale.x, Y: objectScale.y})),
+                        name,
                     ),
                 );
                 return true;
