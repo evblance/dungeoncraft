@@ -24,7 +24,7 @@ export default class Collider extends GameObject {
     }
 
     constructor(
-        scale: Scale = new Scale({X: CONSTANTS.ENTITY_DEFAULT_SCALE, Y: CONSTANTS.ENTITY_DEFAULT_SCALE}),
+        scale: Scale = new Scale({X: CONSTANTS.ENTITY_SIZE, Y: CONSTANTS.ENTITY_SIZE}),
         offset: IVector2D = {X: 0, Y: 0},
     ) {
         super();

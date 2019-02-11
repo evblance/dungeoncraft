@@ -26,15 +26,17 @@ export default class StaticObject extends GameObject {
         worldPosition: Position,
         type: EStaticObjectType,
         colour: string,
-        scale: Scale,
-        collider?: Collider,
+        scale: Scale = new Scale(),
+        collider: Collider = new Collider(),
+        name: string = `New StaticObject`,
     ) {
         super();
         this.worldPosition = worldPosition;
         this.type = type;
         this.colour = colour;
-        this.scale = scale || new Scale();
-        this.collider = collider || new Collider();
+        this.scale = scale;
+        this.collider = collider;
+        this.name = name;
     }
     
 }

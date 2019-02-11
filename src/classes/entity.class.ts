@@ -75,22 +75,24 @@ export default class Entity extends GameObject {
     }
 
     constructor(
+        name: string = `New Entity`,
         faction: EFaction = EFaction.NEUTRAL,
         worldPosition: Position = new Position(),
         health: number = 100,
-        colour: string = CONSTANTS.ENTITY_DEFAULT_COLOUR,
+        colour: string = CONSTANTS.ENTITY_COLOUR,
         state: EEntityState = EEntityState.ALIVE,
-        scale: Scale = new Scale({X: CONSTANTS.GRID_UNIT, Y: CONSTANTS.GRID_UNIT}),
-        collider?: Collider,
+        scale: Scale = new Scale({X: CONSTANTS.ENTITY_SIZE, Y: CONSTANTS.ENTITY_SIZE}),
+        collider: Collider = new Collider(),
     ) {
         super();
+        this.name = name;
         this.faction = faction;
         this.worldPosition = worldPosition;
         this.health = health;
         this.colour = colour;
         this.state = state;
         this.scale = scale;
-        this.collider = collider || new Collider();
+        this.collider = collider;
     }
 
 }

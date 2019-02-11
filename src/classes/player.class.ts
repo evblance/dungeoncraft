@@ -7,13 +7,21 @@ import { CONSTANTS } from '../data/constants.data';
 
 export default class Player extends Entity {
 
-    constructor(worldPosition?: Position, collider?: Collider) {
+    constructor(
+        name: string = `New Player`,
+        worldPosition: Position = new Position(),
+        faction: EFaction = EFaction.PLAYER,
+        colour: string = CONSTANTS.PLAYER_COLOUR,
+        scale: Scale = new Scale({X: CONSTANTS.PLAYER_SIZE, Y: CONSTANTS.PLAYER_SIZE}),
+        collider: Collider = new Collider(),
+    ) {
         super();
-        this.worldPosition = worldPosition || new Position();
-        this.faction = EFaction.PLAYER;
-        this.colour = CONSTANTS.PLAYER_DEFAULT_COLOUR;
-        this.scale = new Scale({X: CONSTANTS.PLAYER_DEFAULT_SCALE, Y: CONSTANTS.PLAYER_DEFAULT_SCALE});
-        this.collider = collider || new Collider();
+        this.name = name;
+        this.worldPosition = worldPosition;
+        this.faction = faction;
+        this.colour = colour;
+        this.scale = scale;
+        this.collider = collider;
     }
 
 }

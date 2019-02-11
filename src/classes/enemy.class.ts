@@ -7,13 +7,21 @@ import { CONSTANTS } from '../data/constants.data';
 
 export default class Enemy extends Entity {
 
-    constructor(worldPosition?: Position, collider?: Collider) {
+    constructor(
+        name: string = `New Enemy`,
+        worldPosition: Position = new Position(),
+        faction: EFaction = EFaction.ENEMY,
+        colour: string = CONSTANTS.ENEMY_COLOUR,
+        scale: Scale = new Scale({X: CONSTANTS.ENEMY_SIZE, Y: CONSTANTS.ENEMY_SIZE}),
+        collider: Collider =  new Collider(),
+    ) {
         super();
-        this.worldPosition = worldPosition || new Position();
-        this.faction = EFaction.ENEMY;
-        this.colour = CONSTANTS.ENEMY_DEFAULT_COLOUR;
-        this.scale = new Scale({X: CONSTANTS.ENEMY_DEFAULT_SCALE, Y: CONSTANTS.ENEMY_DEFAULT_SCALE});
-        this.collider = collider || new Collider();
+        this.name = name;
+        this.worldPosition = worldPosition;
+        this.faction = faction;
+        this.colour = colour;
+        this.scale = scale;
+        this.collider = collider;
     }
 
 }
